@@ -10,19 +10,24 @@ using namespace std;
 vector<vector<int>> generate_distance_matrix(int cities)
 {
 	vector<vector<int>> distance_matrix(cities, vector<int>(cities));
-	srand(time(0));
+
+	random_device rd;
+	mt19937 gen(rd());
+	uniform_int_distribution<> distrib(1, 100);
 
 	for (int i = 0; i < cities; ++i)
 	{
 		for (int j = i; j < cities; ++j)
 		{
-			int rnd = (rand() % 100) + 1;
-			distance_matrix[i][j] = rnd;
-			distance_matrix[j][i] = rnd;
-
 			if (i == j)
 			{
 				distance_matrix[i][j] = 0;
+			}
+			else
+			{
+				int rnd = distrib(gen);// +1;
+				distance_matrix[i][j] = rnd;
+				distance_matrix[j][i] = rnd;
 			}
 		}
 	}

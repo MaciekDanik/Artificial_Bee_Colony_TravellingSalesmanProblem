@@ -127,9 +127,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ABC_Alg.cpp" />
     <ClCompile Include="AO_ABC_TSP.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ABC_Alg.h" />
     <ClInclude Include="distanceMatrix.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

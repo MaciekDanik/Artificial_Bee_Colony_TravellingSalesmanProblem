@@ -7,6 +7,8 @@
 #include <numeric>
 #include <chrono>
 #include <iomanip>
+#include <iomanip>
+#include <omp.h>
 
 using namespace std;
 
@@ -45,7 +47,7 @@ public:
 	* dist_matris -> distance matrix
 	* num_cities -> number of cities
 	*/
-	void employed_bee_phase(vector<vector<int>>& solutions, const vector<vector<int>>& dist_matrix, const int num_cities);
+	void employed_bee_phase(vector<vector<int>>& solutions, vector<double>& fitness_values, const vector<vector<int>>& dist_matrix, const int num_cities);
 	/*
 	* onlooker bee phase
 	* solutions -> a vector with all solutions
@@ -53,7 +55,7 @@ public:
 	* dist_matris -> distance matrix
 	* num_cities -> number of cities
 	*/
-	void onlooker_bee_phase(vector<vector<int>>& solutions, const vector<double>& fitness_values, const vector<vector<int>>& dist_matrix, int num_cities);
+	void onlooker_bee_phase(vector<vector<int>>& solutions, vector<double>& fitness_values, const vector<vector<int>>& dist_matrix, int num_cities);
 	/*
 	* scout bee phase
 	* solutions -> a vector with all solutions
@@ -61,7 +63,7 @@ public:
 	* num_iterations -> number of current iteration
 	* num_cities -> number of cities 
 	*/
-	void scout_bee_phase(vector<vector<int>>& solutions, const vector<double>& fitness_values, int num_iterations, int num_cities);
+	void scout_bee_phase(vector<vector<int>>& solutions, vector<double>& fitness_values, const vector<vector<int>>& dist_matrix, int num_iterations, int num_cities);
 	/*
 	* ABC algorithm
 	* 
@@ -73,5 +75,6 @@ public:
 	*/
 	pair<vector<int>, int> abc_algorithm(const vector<vector<int>>& dist_matrix, int num_iterations, int pop_size);
 
+	void two_opt(vector<int>& solution, int num_cities);
 };
 

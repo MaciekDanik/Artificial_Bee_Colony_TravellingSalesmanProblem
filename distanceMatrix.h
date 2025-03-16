@@ -7,7 +7,7 @@
 
 using namespace std;
 
-vector<vector<int>> generate_distance_matrix(int cities)
+vector<vector<int>> generate_distance_matrix2(int cities)
 {
 	vector<vector<int>> distance_matrix(cities, vector<int>(cities));
 
@@ -32,6 +32,22 @@ vector<vector<int>> generate_distance_matrix(int cities)
 		}
 	}
 	//cout << "Matrix size: " << distance_matrix.size() << endl;
+	return distance_matrix;
+}
+
+vector<vector<int>> generate_distance_matrix(int cities) {
+	random_device rd;
+	mt19937 gen(rd());
+	uniform_int_distribution<> distrib(1, 100);
+
+	vector<vector<int>> distance_matrix(cities, vector<int>(cities, 0));
+
+	for (int i = 0; i < cities; ++i) {
+		for (int j = i + 1; j < cities; ++j) {
+			int dist = distrib(gen);
+			distance_matrix[i][j] = distance_matrix[j][i] = dist;
+		}
+	}
 	return distance_matrix;
 }
 

@@ -171,7 +171,7 @@ pair<vector<int>, int> ABC_Alg::abc_algorithm(const vector<vector<int>>& dist_ma
 
     vector<int> best_solution = solutions[0];
     int best_fitness = fitness_values[0];
-    #pragma omp parallel for
+    //#pragma omp parallel for
     for (int iteration = 0; iteration < num_iterations; ++iteration)
     {
         employed_bee_phase(solutions, fitness_values, dist_matrix, num_cities);

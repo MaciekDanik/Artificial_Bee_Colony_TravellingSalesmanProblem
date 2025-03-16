@@ -135,6 +135,11 @@
   <ItemGroup>
     <ClInclude Include="ABC_Alg.h" />
     <ClInclude Include="distanceMatrix.h" />
+    <ClInclude Include="City.h" />
+    <ClInclude Include="FileHandler.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="visualise_route.py" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

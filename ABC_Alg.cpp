@@ -144,15 +144,16 @@ void ABC_Alg::onlooker_bee_phase(vector<vector<int>>& solutions, vector<double>&
     }*/
 }
 
-void ABC_Alg::scout_bee_phase(vector<vector<int>>& solutions, vector<double>& fitness_values, const vector<vector<int>>& dist_matrix, int num_iterations, int num_cities)
+void ABC_Alg::scout_bee_phase(vector<vector<int>>& solutions, vector<double>& fitness_values, const vector<vector<int>>& dist_matrix, vector<int> not_improved, int num_cities)
 {
-    auto min_fitness = min_element(fitness_values.begin(), fitness_values.end());
-    int worst_solution_index = distance(fitness_values.begin(), min_fitness);
-
-    if (num_iterations % 10 == 0)
+    for (int i = 0; i < solutions.size(); ++i)
     {
-        solutions[worst_solution_index] = generate_initial_solution(num_cities);
-        fitness_values[worst_solution_index] = calculate_fitness(solutions[worst_solution_index], dist_matrix);
+        if (not_improved[i] > 10)
+        {
+            solutions[i] = generate_initial_solution(num_cities);
+            fitness_values[i] = calculate_fitness(solutions[i], dist_matrix);
+            not_improved[i] = 0;
+        }
     }
 }
 
@@ -161,6 +162,7 @@ pair<vector<int>, int> ABC_Alg::abc_algorithm(const vector<vector<int>>& dist_ma
     int num_cities = dist_matrix.size();
     vector<vector<int>> solutions(pop_size);
     vector<double> fitness_values(pop_size);
+    vector<int> not_improved(pop_size, 0);
 
     for (int i = 0; i < pop_size; ++i) {
         solutions[i] = generate_initial_solution(num_cities);
@@ -169,30 +171,42 @@ pair<vector<int>, int> ABC_Alg::abc_algorithm(const vector<vector<int>>& dist_ma
 
     vector<int> best_solution = solutions[0];
     int best_fitness = fitness_values[0];
-
+    #pragma omp parallel for
     for (int iteration = 0; iteration < num_iterations; ++iteration)
     {
         employed_bee_phase(solutions, fitness_values, dist_matrix, num_cities);
-
-        vector<double> fitness_values(pop_size);
         //#pragma omp parallel for
-        for (int j = 0; j < pop_size; ++j)
-        {
-            fitness_values[j] = calculate_fitness(solutions[j], dist_matrix);
-        }
+        //for (int j = 0; j < pop_size; ++j)
+        //{
+        //    fitness_values[j] = calculate_fitness(solutions[j], dist_matrix);
+        //}
 
         onlooker_bee_phase(solutions, fitness_values, dist_matrix, num_cities);
-        scout_bee_phase(solutions, fitness_values, dist_matrix, iteration, num_cities);
+        scout_bee_phase(solutions, fitness_values, dist_matrix, not_improved, num_cities);
 
-        for (const auto& solution : solutions)
+        for (int i = 0; i < pop_size; ++i)
         {
-            int fitness = calculate_fitness(solution, dist_matrix);
-            if (fitness < best_fitness)
+            if (fitness_values[i] < best_fitness)
             {
-                best_solution = solution;
-                best_fitness = fitness;
+                best_solution = solutions[i];
+                best_fitness = fitness_values[i];
+                not_improved[i] = 0;
+            }
+            else
+            {
+                not_improved[i]++;
             }
         }
+
+        //for (const auto& solution : solutions)
+        //{
+        //    int fitness = calculate_fitness(solution, dist_matrix);
+        //    if (fitness < best_fitness)
+        //    {
+        //        best_solution = solution;
+        //        best_fitness = fitness;
+        //    }
+        //}
     }
 
     return {best_solution, best_fitness};

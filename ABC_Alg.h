@@ -63,7 +63,7 @@ public:
 	* num_iterations -> number of current iteration
 	* num_cities -> number of cities 
 	*/
-	void scout_bee_phase(vector<vector<int>>& solutions, vector<double>& fitness_values, const vector<vector<int>>& dist_matrix, int num_iterations, int num_cities);
+	void scout_bee_phase(vector<vector<int>>& solutions, vector<double>& fitness_values, const vector<vector<int>>& dist_matrix, vector<int> not_improved, int num_cities);
 	/*
 	* ABC algorithm
 	* 

@@ -11,8 +11,8 @@ def load_results(filename="results.txt"):
         reading_cities = False
         reading_route = False
         
-        for line in lines:
-            line = line.strip()
+        for i in range(len(lines)):
+            line = lines[i].strip()
             if not line:  # Ignorowanie pustych linii
                 continue
             
@@ -27,11 +27,13 @@ def load_results(filename="results.txt"):
             elif line.startswith("Total Distance:"):
                 reading_cities = False
                 reading_route = False
-                try:
-                    total_distance = float(line.split(":")[1].strip())  # Poprawne parsowanie liczby
-                except ValueError:
-                    print("Unable to read Total Distance!")
-                    total_distance = 0
+                # Pobranie następnej linii jako dystansu
+                if i + 1 < len(lines):
+                    try:
+                        total_distance = float(lines[i + 1].strip())  # Parsowanie liczby
+                    except ValueError:
+                        print("Unable to read Total Distance!")
+                        total_distance = 0
                 continue
                 
             if reading_cities:
@@ -55,7 +57,7 @@ def plot_route(cities, best_route, total_distance):
     # Rysowanie miast
     for city_id, (x, y) in cities.items():
         plt.scatter(x, y, color='blue', s=100)
-        plt.text(x, y, str(city_id), fontsize=12, ha='right', color='red')
+        plt.text(x, y, str(city_id), fontsize=15, ha='right', color='red')
     
     # Rysowanie połączeń między miastami
     for i in range(len(best_route) - 1):
@@ -74,6 +76,10 @@ def plot_route(cities, best_route, total_distance):
 # Wczytanie danych z pliku
 data_file = "results.txt"
 cities, best_route, total_distance = load_results(data_file)
+
+print(cities)
+print(best_route)
+print(total_distance)
 
 # Wizualizacja trasy
 plot_route(cities, best_route, total_distance)

@@ -17,17 +17,17 @@ int main()
 {
     ABC_Alg alg;
     //vector<int> cities = { 10, 50, 100, 250, 500, 1000, 5000 };
-    vector<int> cities = { 10, 10 };
+    vector<int> cities = { 20 };
     vector<double> times;
 
-    int num_iterations = 100;
-    int population_size = 50;
+    int num_iterations = 150;
+    int population_size = 100;
 
     for (int city : cities)
     {
         //auto distance_matrix = generate_distance_matrix(city);
         auto distance_matrix = generate_distance_matrix3(city);        
-        printMatrix(distance_matrix.first);
+        //printMatrix(distance_matrix.first);
 
         vector<City> cities_points = distance_matrix.second;
 

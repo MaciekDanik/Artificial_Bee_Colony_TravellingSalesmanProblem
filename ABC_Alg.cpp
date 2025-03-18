@@ -148,7 +148,7 @@ void ABC_Alg::scout_bee_phase(vector<vector<int>>& solutions, vector<double>& fi
 {
     for (int i = 0; i < solutions.size(); ++i)
     {
-        if (not_improved[i] > 10)
+        if (not_improved[i] > 100)
         {
             solutions[i] = generate_initial_solution(num_cities);
             fitness_values[i] = calculate_fitness(solutions[i], dist_matrix);

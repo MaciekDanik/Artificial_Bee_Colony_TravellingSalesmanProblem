@@ -17,11 +17,11 @@ int main()
 {
     ABC_Alg alg;
     //vector<int> cities = { 10, 50, 100, 250, 500, 1000, 5000 };
-    vector<int> cities = { 20 };
+    vector<int> cities = { 50 };
     vector<double> times;
 
-    int num_iterations = 150;
-    int population_size = 100;
+    int num_iterations = 100;
+    int population_size = 600;
 
     for (int city : cities)
     {

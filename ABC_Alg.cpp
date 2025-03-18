@@ -36,6 +36,7 @@ void ABC_Alg::employed_bee_phase(vector<vector<int>>& solutions, vector<double>&
     random_device rd;
     mt19937 gen(rd());
     uniform_int_distribution<> distrib(0, num_cities - 1);
+    #pragma omp parallel for
     for (int i = 0; i<solutions.size();++i)
     {
         int rnd_pos1 = distrib(gen);
@@ -146,9 +147,10 @@ void ABC_Alg::onlooker_bee_phase(vector<vector<int>>& solutions, vector<double>&
 
 void ABC_Alg::scout_bee_phase(vector<vector<int>>& solutions, vector<double>& fitness_values, const vector<vector<int>>& dist_matrix, vector<int> not_improved, int num_cities)
 {
+    #pragma omp parallel for
     for (int i = 0; i < solutions.size(); ++i)
     {
-        if (not_improved[i] > 100)
+        if (not_improved[i] > 10)
         {
             solutions[i] = generate_initial_solution(num_cities);
             fitness_values[i] = calculate_fitness(solutions[i], dist_matrix);

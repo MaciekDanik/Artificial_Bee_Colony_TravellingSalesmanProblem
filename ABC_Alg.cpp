@@ -36,7 +36,7 @@ void ABC_Alg::employed_bee_phase(vector<vector<int>>& solutions, vector<double>&
     random_device rd;
     mt19937 gen(rd());
     uniform_int_distribution<> distrib(0, num_cities - 1);
-    #pragma omp parallel for
+    //#pragma omp parallel for
     for (int i = 0; i<solutions.size();++i)
     {
         int rnd_pos1 = distrib(gen);
@@ -57,105 +57,68 @@ void ABC_Alg::employed_bee_phase(vector<vector<int>>& solutions, vector<double>&
             swap(solutions[i][rnd_pos1], solutions[i][rnd_pos2]);
         }
     }
-
-
-    /*
-    for (auto& solution : solutions)
-    {
-        //create a new vector the same size as solution to store new solution
-        vector<int> new_solution = solution;
-        int rnd_pos1 = distrib(gen);
-        int rnd_pos2 = distrib(gen);
-        //swap two randolmy selected cities to create a new solution
-        swap(new_solution[rnd_pos1], new_solution[rnd_pos2]);
-
-        int new_fitness = calculate_fitness(new_solution, dist_matrix);
-
-        if (new_fitness < calculate_fitness(solution, dist_matrix))
-        {
-            //if the new fitness is better (shorter distance) 
-            // replace the solution with new_solution
-            solution = new_solution;
-        }
-    }*/
 }
 
-void ABC_Alg::onlooker_bee_phase(vector<vector<int>>& solutions, vector<double>& fitness_values, const vector<vector<int>>& dist_matrix, int num_cities)
+void ABC_Alg::onlooker_bee_phase(vector<vector<int>>& solutions, vector<double>& fitness_values, const vector<vector<int>>& dist_matrix, int num_cities, vector<int>& not_improved)
 {
     random_device rd;
     mt19937 gen(rd());
-    discrete_distribution<int> distrib(fitness_values.begin(), fitness_values.end());
+    uniform_int_distribution<int> city_dist(0, num_cities - 1);
 
-    for (int i = 0; i < solutions.size(); ++i)
+    for (int i = 0; i < solutions.size(); ++i) 
     {
-        int rnd_index = distrib(gen);
-        two_opt(solutions[rnd_index], solutions[0].size());
+        // Oblicz prawdopodobieñstwo wyboru rozwi¹zania
+        vector<double> probabilities(fitness_values.size());
+        double sum_fitness = 0.0;
 
-        int new_fitness = calculate_fitness(solutions[rnd_index], dist_matrix);
-        if (new_fitness < fitness_values[rnd_index])
+            for (double fitness : fitness_values) 
+            {
+                sum_fitness += fitness;
+            }
+
+        for (int j = 0; j < fitness_values.size(); ++j) 
+        {
+            probabilities[j] = fitness_values[j] / sum_fitness;
+        }
+
+        discrete_distribution<int> distrib(probabilities.begin(), probabilities.end());
+        int rnd_index = distrib(gen);
+
+        // Operator 2-opt
+        int pos1 = city_dist(gen);
+        int pos2 = city_dist(gen);
+        if (pos1 > pos2) 
+        {
+            swap(pos1, pos2);
+        }
+
+        vector<int> new_solution = solutions[rnd_index];
+        reverse(new_solution.begin() + pos1, new_solution.begin() + pos2 + 1);
+
+        double new_fitness = calculate_fitness(new_solution, dist_matrix);
+
+        if (new_fitness < fitness_values[rnd_index]) 
         {
             fitness_values[rnd_index] = new_fitness;
+            solutions[rnd_index] = new_solution;
+            not_improved[rnd_index] = 0; // Reset trial count
+        }
+        else 
+        {
+            not_improved[rnd_index]++;
         }
     }
-
-
-    /*
-    random_device rd;
-    mt19937 gen(rd());
-    uniform_real_distribution<> distrib_real(0.0, 1.0);
-    uniform_int_distribution<> distrib(0, num_cities - 1);
-
-    double fitness_sum = accumulate(fitness_values.begin(), fitness_values.end(), 0.0);
-    vector<double> probabilities(fitness_values.size());
-
-    for (int i = 0; i < fitness_values.size(); ++i)
-    {
-        probabilities[i] = fitness_values[i] / fitness_sum;
-    }
-
-    for (int i = 0; i < solutions.size(); ++i)
-    {
-        double rnd_value = distrib_real(gen);
-        double probabilities_sum = 0.0;
-        int solution_index = 0;
-
-        for (int j = 0; j < probabilities.size(); ++j)
-        {
-            probabilities_sum += probabilities[i];
-            if (rnd_value <= probabilities_sum)
-            {
-                solution_index = j;
-                break;
-            }
-        }
-
-        vector<int> new_solution = solutions[solution_index];
-        
-        int rnd_pos1 = distrib(gen);
-        int rnd_pos2 = distrib(gen);
-        swap(new_solution[rnd_pos1], new_solution[rnd_pos2]);
-
-        int new_fitness = calculate_fitness(new_solution, dist_matrix);
-
-        if (new_fitness < calculate_fitness(solutions[i], dist_matrix))
-        {
-            // if better than curent solution at solution_index, replace
-            solutions[solution_index] = new_solution;
-        }
-    }*/
 }
 
-void ABC_Alg::scout_bee_phase(vector<vector<int>>& solutions, vector<double>& fitness_values, const vector<vector<int>>& dist_matrix, vector<int> not_improved, int num_cities)
+void ABC_Alg::scout_bee_phase(vector<vector<int>>& solutions, vector<double>& fitness_values, const vector<vector<int>>& dist_matrix, int num_iterations, int num_cities, vector<int>& not_improved)
 {
-    #pragma omp parallel for
-    for (int i = 0; i < solutions.size(); ++i)
+    auto worst_idx = max_element(fitness_values.begin(), fitness_values.end());
+    int worst_solution_idx = distance(fitness_values.begin(), worst_idx);
+
+    if (num_iterations % 10 == 0)
     {
-        if (not_improved[i] > 10)
-        {
-            solutions[i] = generate_initial_solution(num_cities);
-            fitness_values[i] = calculate_fitness(solutions[i], dist_matrix);
-            not_improved[i] = 0;
-        }
+        solutions[worst_solution_idx] = generate_initial_solution(num_cities);
+        fitness_values[worst_solution_idx] = calculate_fitness(solutions[worst_solution_idx], dist_matrix);
     }
 }
 
@@ -173,57 +136,45 @@ pair<vector<int>, int> ABC_Alg::abc_algorithm(const vector<vector<int>>& dist_ma
 
     vector<int> best_solution = solutions[0];
     int best_fitness = fitness_values[0];
-    //#pragma omp parallel for
+    #pragma omp parallel for
     for (int iteration = 0; iteration < num_iterations; ++iteration)
     {
+
+        //Employed bee phase
+        auto start_employed = chrono::high_resolution_clock::now();
         employed_bee_phase(solutions, fitness_values, dist_matrix, num_cities);
-        //#pragma omp parallel for
-        //for (int j = 0; j < pop_size; ++j)
-        //{
-        //    fitness_values[j] = calculate_fitness(solutions[j], dist_matrix);
-        //}
+        auto stop_employed = chrono::high_resolution_clock::now();
+        auto duration_employed = chrono::duration_cast<chrono::microseconds>(stop_employed - start_employed);
+        cout << "\nEmployed bee phase: " << (duration_employed.count() / 1000000.0)<< "s\n";
 
-        onlooker_bee_phase(solutions, fitness_values, dist_matrix, num_cities);
-        scout_bee_phase(solutions, fitness_values, dist_matrix, not_improved, num_cities);
+        //Onlooker bee phase
+        auto start_onlooker = chrono::high_resolution_clock::now();
+        onlooker_bee_phase(solutions, fitness_values, dist_matrix, num_cities, not_improved);
+        auto stop_onlooker = chrono::high_resolution_clock::now();
+        auto duration_onlooker = chrono::duration_cast<chrono::microseconds>(stop_onlooker - start_onlooker);
+        cout << "\nOnlooker bee phase: " << (duration_onlooker.count() / 1000000.0) << "s\n";
 
-        for (int i = 0; i < pop_size; ++i)
+        //Scout bee phase
+        auto start_scout = chrono::high_resolution_clock::now();
+        scout_bee_phase(solutions, fitness_values, dist_matrix, iteration, num_cities, not_improved);
+        auto stop_scout = chrono::high_resolution_clock::now();
+        auto duration_scout = chrono::duration_cast<chrono::microseconds>(stop_scout - start_scout);
+        cout << "\nScout bee phase: " << (duration_scout.count() / 1000000.0) << "s\n";
+
+
+        for (const auto& solution : solutions)
         {
-            if (fitness_values[i] < best_fitness)
+            int fitness = calculate_fitness(solution, dist_matrix);
+            if (fitness < best_fitness)
             {
-                best_solution = solutions[i];
-                best_fitness = fitness_values[i];
-                not_improved[i] = 0;
-            }
-            else
-            {
-                not_improved[i]++;
+                cout << "\nOld fitness: " << best_fitness << "\n";
+                best_solution = solution;
+                best_fitness = fitness;
+                cout << "New fitness: " << best_fitness << "\n";
             }
         }
-
-        //for (const auto& solution : solutions)
-        //{
-        //    int fitness = calculate_fitness(solution, dist_matrix);
-        //    if (fitness < best_fitness)
-        //    {
-        //        best_solution = solution;
-        //        best_fitness = fitness;
-        //    }
-        //}
     }
 
     return {best_solution, best_fitness};
-}
-
-void ABC_Alg::two_opt(vector<int>& solution, int num_cities)
-{
-    random_device rd;
-    mt19937 gen(rd());
-    uniform_int_distribution<> distrib(0, num_cities - 1);
-
-    int i = distrib(gen);
-    int k = distrib(gen);
-    if (i > k) swap(i, k);
-
-    reverse(solution.begin() + i, solution.begin() + k + 1);
 }
 

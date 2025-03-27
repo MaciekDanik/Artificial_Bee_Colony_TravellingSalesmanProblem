@@ -58,13 +58,18 @@ def plot_route(cities, best_route, total_distance):
     for city_id, (x, y) in cities.items():
         plt.scatter(x, y, color='blue', s=100)
         plt.text(x, y, str(city_id), fontsize=15, ha='right', color='red')
-    
+
     # Rysowanie połączeń między miastami
     for i in range(len(best_route) - 1):
         c1, c2 = best_route[i], best_route[i + 1]
         x_values = [cities[c1][0], cities[c2][0]]
         y_values = [cities[c1][1], cities[c2][1]]
         plt.plot(x_values, y_values, 'k-', lw=2)
+
+    c1, c2 = best_route[-1], best_route[0]
+    x_values = [cities[c1][0], cities[c2][0]]
+    y_values = [cities[c1][1], cities[c2][1]]
+    plt.plot(x_values, y_values, 'k-', lw=2)
     
     # Dodanie tytułu
     plt.title(f"Best Track | Distance: {total_distance:.2f}")

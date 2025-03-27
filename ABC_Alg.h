@@ -55,7 +55,7 @@ public:
 	* dist_matris -> distance matrix
 	* num_cities -> number of cities
 	*/
-	void onlooker_bee_phase(vector<vector<int>>& solutions, vector<double>& fitness_values, const vector<vector<int>>& dist_matrix, int num_cities);
+	void onlooker_bee_phase(vector<vector<int>>& solutions, vector<double>& fitness_values, const vector<vector<int>>& dist_matrix, int num_cities, vector<int>& not_improved);
 	/*
 	* scout bee phase
 	* solutions -> a vector with all solutions
@@ -63,7 +63,7 @@ public:
 	* num_iterations -> number of current iteration
 	* num_cities -> number of cities 
 	*/
-	void scout_bee_phase(vector<vector<int>>& solutions, vector<double>& fitness_values, const vector<vector<int>>& dist_matrix, vector<int> not_improved, int num_cities);
+	void scout_bee_phase(vector<vector<int>>& solutions, vector<double>& fitness_values, const vector<vector<int>>& dist_matrix, int num_iterations, int num_cities, vector<int>& not_improved);
 	/*
 	* ABC algorithm
 	* 
@@ -74,7 +74,5 @@ public:
 	* returns: best solution and its fitness
 	*/
 	pair<vector<int>, int> abc_algorithm(const vector<vector<int>>& dist_matrix, int num_iterations, int pop_size);
-
-	void two_opt(vector<int>& solution, int num_cities);
 };
 

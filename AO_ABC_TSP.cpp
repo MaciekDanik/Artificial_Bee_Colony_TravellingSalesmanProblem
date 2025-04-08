@@ -17,7 +17,7 @@ int main()
 {
     ABC_Alg alg;
     //vector<int> cities = { 10, 50, 100, 250, 500, 1000, 5000 };
-    vector<int> cities = { 30 };
+    vector<int> cities = { 20 };
     vector<double> times;
 
     int num_iterations = 1500;

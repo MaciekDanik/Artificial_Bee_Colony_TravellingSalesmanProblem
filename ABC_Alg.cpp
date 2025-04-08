@@ -84,7 +84,6 @@ void ABC_Alg::onlooker_bee_phase(vector<vector<int>>& solutions, vector<double>&
         discrete_distribution<int> distrib(probabilities.begin(), probabilities.end());
         int rnd_index = distrib(gen);
 
-        // Operator 2-opt
         int pos1 = city_dist(gen);
         int pos2 = city_dist(gen);
         if (pos1 > pos2) 
@@ -141,25 +140,25 @@ pair<vector<int>, int> ABC_Alg::abc_algorithm(const vector<vector<int>>& dist_ma
     {
 
         //Employed bee phase
-        auto start_employed = chrono::high_resolution_clock::now();
+        //auto start_employed = chrono::high_resolution_clock::now();
         employed_bee_phase(solutions, fitness_values, dist_matrix, num_cities);
-        auto stop_employed = chrono::high_resolution_clock::now();
-        auto duration_employed = chrono::duration_cast<chrono::microseconds>(stop_employed - start_employed);
-        cout << "\nEmployed bee phase: " << (duration_employed.count() / 1000000.0)<< "s\n";
+        //auto stop_employed = chrono::high_resolution_clock::now();
+        //auto duration_employed = chrono::duration_cast<chrono::microseconds>(stop_employed - start_employed);
+        //cout << "\nEmployed bee phase: " << (duration_employed.count() / 1000000.0)<< "s\n";
 
         //Onlooker bee phase
-        auto start_onlooker = chrono::high_resolution_clock::now();
+        //auto start_onlooker = chrono::high_resolution_clock::now();
         onlooker_bee_phase(solutions, fitness_values, dist_matrix, num_cities, not_improved);
-        auto stop_onlooker = chrono::high_resolution_clock::now();
-        auto duration_onlooker = chrono::duration_cast<chrono::microseconds>(stop_onlooker - start_onlooker);
-        cout << "\nOnlooker bee phase: " << (duration_onlooker.count() / 1000000.0) << "s\n";
+        //auto stop_onlooker = chrono::high_resolution_clock::now();
+        //auto duration_onlooker = chrono::duration_cast<chrono::microseconds>(stop_onlooker - start_onlooker);
+        //cout << "\nOnlooker bee phase: " << (duration_onlooker.count() / 1000000.0) << "s\n";
 
         //Scout bee phase
-        auto start_scout = chrono::high_resolution_clock::now();
+        //auto start_scout = chrono::high_resolution_clock::now();
         scout_bee_phase(solutions, fitness_values, dist_matrix, iteration, num_cities, not_improved);
-        auto stop_scout = chrono::high_resolution_clock::now();
-        auto duration_scout = chrono::duration_cast<chrono::microseconds>(stop_scout - start_scout);
-        cout << "\nScout bee phase: " << (duration_scout.count() / 1000000.0) << "s\n";
+        //auto stop_scout = chrono::high_resolution_clock::now();
+        //auto duration_scout = chrono::duration_cast<chrono::microseconds>(stop_scout - start_scout);
+        //cout << "\nScout bee phase: " << (duration_scout.count() / 1000000.0) << "s\n";
 
 
         for (const auto& solution : solutions)

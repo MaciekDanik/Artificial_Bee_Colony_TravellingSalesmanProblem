@@ -36,48 +36,50 @@ int ABC_Alg::calculate_fitness(const vector<int>& solution, const vector<vector<
 void ABC_Alg::employed_bee_phase(vector<vector<int>>& solutions, vector<double>& fitness_values, const vector<vector<int>>& dist_matrix, const int num_cities)
 {
     //#pragma omp parallel for private(gen, distrib)
+    for (int i = 0; i < solutions.size(); ++i)
+    {
+        mt19937 gen(random_device{}());  // jeden generator na w¹tek
+        uniform_int_distribution<> distrib(0, num_cities - 1);
+
+        vector<int> new_solution = solutions[i];
+        int rnd_pos1 = distrib(gen);
+        int rnd_pos2 = distrib(gen);
+        swap(new_solution[rnd_pos1], new_solution[rnd_pos2]);
+
+        int new_fitness = calculate_fitness(new_solution, dist_matrix);
+
+        if (new_fitness < fitness_values[i])
+        {
+            solutions[i] = new_solution;
+            fitness_values[i] = new_fitness;
+        }
+    }
+
+
+    //random_device rd;
+    //mt19937 gen(rd());
+    //uniform_int_distribution<> distrib(0, num_cities - 1);
+    ////#pragma omp parallel for
     //for (int i = 0; i < solutions.size(); ++i)
     //{
-    //    mt19937 gen(random_device{}());  // jeden generator na w¹tek
-    //    uniform_int_distribution<> distrib(0, num_cities - 1);
-
-    //    vector<int> new_solution = solutions[i];
     //    int rnd_pos1 = distrib(gen);
     //    int rnd_pos2 = distrib(gen);
-    //    swap(new_solution[rnd_pos1], new_solution[rnd_pos2]);
+    //    //swap two randolmy selected cities to create a new solution
+    //    swap(solutions[i][rnd_pos1], solutions[i][rnd_pos2]);
 
-    //    int new_fitness = calculate_fitness(new_solution, dist_matrix);
+    //    int new_fitness = calculate_fitness(solutions[i], dist_matrix);
 
     //    if (new_fitness < fitness_values[i])
     //    {
-    //        solutions[i] = new_solution;
+    //        //if the new fitness is better (shorter distance) 
+    //        // replace the solution with new_solution
     //        fitness_values[i] = new_fitness;
     //    }
+    //    else
+    //    {
+    //        swap(solutions[i][rnd_pos1], solutions[i][rnd_pos2]);
+    //    }
     //}
-
-
-    random_device rd;
-    mt19937 gen(rd());
-    uniform_int_distribution<> distrib(0, num_cities - 1);
-    //#pragma omp parallel for
-    for (int i = 0; i < solutions.size(); ++i)
-    {
-        int rnd_pos1 = distrib(gen);
-        int rnd_pos2 = distrib(gen);
-        //swap two randolmy selected cities to create a new solution
-        swap(solutions[i][rnd_pos1], solutions[i][rnd_pos2]);
-        int new_fitness = calculate_fitness(solutions[i], dist_matrix);
-        if (new_fitness < fitness_values[i])
-        {
-            //if the new fitness is better (shorter distance) 
-            // replace the solution with new_solution
-            fitness_values[i] = new_fitness;
-        }
-        else
-        {
-            swap(solutions[i][rnd_pos1], solutions[i][rnd_pos2]);
-        }
-    }
 }
 
 void ABC_Alg::onlooker_bee_phase(vector<vector<int>>& solutions, vector<double>& fitness_values, const vector<vector<int>>& dist_matrix, int num_cities, vector<int>& not_improved)
@@ -154,14 +156,11 @@ pair<vector<int>, int> ABC_Alg::abc_algorithm(const vector<vector<int>>& dist_ma
         fitness_values[i] = calculate_fitness(solutions[i], dist_matrix);
     }
 
-    //auto min_iterator = min_element(fitness_values.begin(), fitness_values.end());
-    //int index = distance(fitness_values.begin(), min_iterator);
+    auto min_iterator = min_element(fitness_values.begin(), fitness_values.end());
+    int index = distance(fitness_values.begin(), min_iterator);
 
-    //int best_fitness = fitness_values[index];
-    //vector<int> best_solution = solutions[index];
-
-    int best_fitness = fitness_values[0];
-    vector<int> best_solution = solutions[0];
+    int best_fitness = fitness_values[index];
+    vector<int> best_solution = solutions[index];
 
     //#pragma omp parallel for shared(dist_matrix, num_cities, solutions, fitness_values, not_improved)
     for (int iteration = 0; iteration < num_iterations; ++iteration)

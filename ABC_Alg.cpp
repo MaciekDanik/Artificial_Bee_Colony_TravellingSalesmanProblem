@@ -23,10 +23,12 @@ int ABC_Alg::calculate_fitness(const vector<int>& solution, const vector<vector<
 
     for (int i = 0; i < solution.size() - 1; ++i)
     {
-        total_dist += calculate_distance(solution[i], solution[i + 1], dist_matrix);
+        //total_dist += calculate_distance(solution[i], solution[i + 1], dist_matrix);
+        total_dist += dist_matrix[solution[i]][solution[i + 1]];
     }
 
-    total_dist += calculate_distance(solution.back(), solution.front(), dist_matrix);
+    //total_dist += calculate_distance(solution.back(), solution.front(), dist_matrix);
+    total_dist += dist_matrix[solution.back()][solution.front()];
 
     return total_dist;
 }

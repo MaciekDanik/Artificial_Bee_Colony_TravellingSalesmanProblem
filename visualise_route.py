@@ -110,6 +110,8 @@ def plot_route(cities, best_route, total_distance, title):
 #bee_file = "results_bee_0.txt"
 #cities, bee_best_route, bee_total_distance = load_results(bee_file)
 
+CITIES = 3 #cities.size()
+
 #zaczytanie danych z różnych plików
 cities_list = list()
 bee_best_route = list()
@@ -130,7 +132,7 @@ cities_list_nn = list()
 nn_best_route = list()
 nn_total_distance = list()
 
-for i in range(0,3):
+for i in range(0,CITIES):
     nn_file = "results_nn_" + str(i) + ".txt"
     _cities, _nn_best_route, _nn_total_distance = load_results(nn_file)
     cities_list_nn.append(_cities)
@@ -145,7 +147,7 @@ for i in range(0,3):
 #plot_route(cities_list[0], bee_best_route[0], bee_total_distance[0], "ABC alg")
 #plot_route(cities, nn_best_route, nn_total_distance, "NN alg")
 
-for i in range (0,3):
+for i in range (0,CITIES):
     plot_route(cities_list[i], bee_best_route[i], bee_total_distance[i], "ABC alg")
     plot_route(cities_list_nn[i], nn_best_route[i], nn_total_distance[i], "NN alg")
 

@@ -18,8 +18,9 @@ public:
 };
 
 
-void save_results_bee(const vector<City>& cities, const vector<int>& best_route, double best_distance) {
-    ofstream file("results_bee.txt");
+void save_results_bee(const vector<City>& cities, const vector<int>& best_route, double best_distance, string filename) 
+{
+    ofstream file(filename);
 
     if (!file) {
         cerr << "Error opening file!" << endl;
@@ -40,8 +41,9 @@ void save_results_bee(const vector<City>& cities, const vector<int>& best_route,
     file.close();
 }
 
-void save_results_nn(const vector<City>& cities, const vector<int>& best_route, double best_distance) {
-    ofstream file("results_nn.txt");
+void save_results_nn(const vector<City>& cities, const vector<int>& best_route, double best_distance, string filename) 
+{
+    ofstream file(filename);
 
     if (!file) {
         cerr << "Error opening file!" << endl;

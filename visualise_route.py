@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 
 # Funkcja do wczytywania danych z pliku
-def load_results(filename="results.txt"):
+def load_results(filename):
     cities = {}
     best_route = []
     total_distance = 0
@@ -51,7 +51,7 @@ def load_results(filename="results.txt"):
     return cities, best_route, total_distance
 
 # Funkcja do wizualizacji trasy
-def plot_route(cities, best_route, total_distance):
+def plot_route(cities, best_route, total_distance, title):
     plt.figure(figsize=(8, 6))
     
     # Rysowanie miast
@@ -72,19 +72,81 @@ def plot_route(cities, best_route, total_distance):
     plt.plot(x_values, y_values, 'k-', lw=2)
     
     # Dodanie tytułu
-    plt.title(f"Best Track | Distance: {total_distance:.2f}")
+    plt.title(f"Best Track with {title}| Distance: {total_distance:.2f}")
     plt.xlabel("X")
     plt.ylabel("Y")
     plt.grid(True)
     plt.show()
 
-# Wczytanie danych z pliku
-data_file = "results.txt"
-cities, best_route, total_distance = load_results(data_file)
+def plot_route(cities, best_route, total_distance, title):
+    plt.figure(figsize=(8, 6))
+    
+    # Rysowanie miast
+    for city_id, (x, y) in cities.items():
+        plt.scatter(x, y, color='blue', s=100)
+        plt.text(x, y, str(city_id), fontsize=15, ha='right', color='red')
 
-print(cities)
-print(best_route)
-print(total_distance)
+    # Rysowanie połączeń między miastami
+    for i in range(len(best_route) - 1):
+        c1, c2 = best_route[i], best_route[i + 1]
+        x_values = [cities[c1][0], cities[c2][0]]
+        y_values = [cities[c1][1], cities[c2][1]]
+        plt.plot(x_values, y_values, 'k-', lw=2)
+
+    c1, c2 = best_route[-1], best_route[0]
+    x_values = [cities[c1][0], cities[c2][0]]
+    y_values = [cities[c1][1], cities[c2][1]]
+    plt.plot(x_values, y_values, 'k-', lw=2)
+    
+    # Dodanie tytułu
+    plt.title(f"Best Track with {title}| Distance: {total_distance:.2f}")
+    plt.xlabel("X")
+    plt.ylabel("Y")
+    plt.grid(True)
+    plt.show()
+
+# Wczytanie danych z pliku -- algorytm pszczeli
+#bee_file = "results_bee_multi.txt"
+#bee_file = "results_bee_0.txt"
+#cities, bee_best_route, bee_total_distance = load_results(bee_file)
+
+#zaczytanie danych z różnych plików
+cities_list = list()
+bee_best_route = list()
+bee_total_distance = list()
+
+for i in range(0,3):
+    bee_file = "results_bee_" + str(i) + ".txt"
+    _cities, _bee_best_route, _bee_total_distance = load_results(bee_file)
+    cities_list.append(_cities)
+    bee_best_route.append(_bee_best_route)
+    bee_total_distance.append(_bee_total_distance)
+
+# Wczytanie danych z pliku -- algorytm najbliższego sąsiada
+# nn_file = "results_nn_multi.txt"
+# nn_cities, nn_best_route, nn_total_distance = load_results(nn_file)
+
+cities_list_nn = list()
+nn_best_route = list()
+nn_total_distance = list()
+
+for i in range(0,3):
+    nn_file = "results_nn_" + str(i) + ".txt"
+    _cities, _nn_best_route, _nn_total_distance = load_results(nn_file)
+    cities_list_nn.append(_cities)
+    nn_best_route.append(_nn_best_route)
+    nn_total_distance.append(_nn_total_distance)
+
+# print(cities_list)
+# print(bee_best_route)
+# print(bee_total_distance)
 
 # Wizualizacja trasy
-plot_route(cities, best_route, total_distance)
+#plot_route(cities_list[0], bee_best_route[0], bee_total_distance[0], "ABC alg")
+#plot_route(cities, nn_best_route, nn_total_distance, "NN alg")
+
+for i in range (0,3):
+    plot_route(cities_list[i], bee_best_route[i], bee_total_distance[i], "ABC alg")
+    plot_route(cities_list_nn[i], nn_best_route[i], nn_total_distance[i], "NN alg")
+
+

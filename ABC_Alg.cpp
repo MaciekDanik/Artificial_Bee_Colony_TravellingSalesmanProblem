@@ -193,10 +193,10 @@ pair<vector<int>, int> ABC_Alg::abc_algorithm(const vector<vector<int>>& dist_ma
             int fitness = calculate_fitness(solution, dist_matrix);
             if (fitness < best_fitness)
             {
-                cout << "\nOld fitness: " << best_fitness << "\n";
+                //cout << "\nOld fitness: " << best_fitness << "\n";
                 best_solution = solution;
                 best_fitness = fitness;
-                cout << "New fitness: " << best_fitness << "\n";
+                //cout << "New fitness: " << best_fitness << "\n";
             }
         }
     }

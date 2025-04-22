@@ -6,6 +6,7 @@
 #include <chrono>
 #include <iomanip>
 #include <omp.h>
+#include <string>
 #include "distanceMatrix.h"
 #include "ABC_Alg.h"
 #include "FileHandler.h"
@@ -23,8 +24,23 @@ int main()
     int population_size = 50;
 
     const int bee_iteration = 5;
+    int iter = 0;
     vector<SaveFileInput> saveFileInputBee;
     vector<SaveFileInput> saveFileInputNN;
+    
+    vector<string> bee_fileNames(cities.size(), "");
+    for (int i = 0; i<cities.size(); ++i)
+    {
+        bee_fileNames[i] = "results_bee_" + to_string(i) + ".txt";
+        //cout << bee_fileNames[i] << endl;
+    }
+
+    vector<string> nn_fileNames(cities.size(), "");
+    for (int i = 0; i < cities.size(); ++i)
+    {
+        nn_fileNames[i] = "results_nn_" + to_string(i) + ".txt";
+        //cout << bee_fileNames[i] << endl;
+    }
 
     for (int city : cities)
     {
@@ -55,6 +71,8 @@ int main()
             }
         }
 
+        save_results_bee(cities_points, best_route_overall, best_distance, bee_fileNames[iter]);
+
         double avgTime = std::accumulate(timesBee.begin(), timesBee.end(), 0.0) / bee_iteration;
         double avgDistance = std::accumulate(distanceBee.begin(), distanceBee.end(), 0.0) / bee_iteration;
 
@@ -83,6 +101,10 @@ int main()
         resultInputNN.avaregeDitance = result.second;
         resultInputNN.avarageTime = time_sec;
         saveFileInputNN.push_back(resultInputNN);
+
+        save_results_nn(cities_points, result.first, result.second, nn_fileNames[iter]);
+
+        ++iter;
 
     }
 

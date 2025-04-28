@@ -35,7 +35,7 @@ int ABC_Alg::calculate_fitness(const vector<int>& solution, const vector<vector<
 
 void ABC_Alg::employed_bee_phase(vector<vector<int>>& solutions, vector<double>& fitness_values, const vector<vector<int>>& dist_matrix, const int num_cities)
 {
-    //#pragma omp parallel for private(gen, distrib)
+    //#pragma omp parallel //for private(gen, distrib) //Tutaj by³o zakomentowane
     for (int i = 0; i < solutions.size(); ++i)
     {
         mt19937 gen(random_device{}());  // jeden generator na w¹tek
@@ -88,6 +88,7 @@ void ABC_Alg::onlooker_bee_phase(vector<vector<int>>& solutions, vector<double>&
     mt19937 gen(rd());
     uniform_int_distribution<int> city_dist(0, num_cities - 1);
 
+    //#pragma omp parallel for shared(gen, city_dist)
     for (int i = 0; i < solutions.size(); ++i) 
     {
         // Oblicz prawdopodobieñstwo wyboru rozwi¹zania

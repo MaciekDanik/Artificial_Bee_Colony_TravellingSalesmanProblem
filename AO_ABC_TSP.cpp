@@ -18,12 +18,13 @@ int main()
 {
     ABC_Alg alg;
     NN_alg nn_alg;
-    vector<int> cities = { 10, 25, 50 };
+    //vector<int> cities = { 10, 25, 50 , 100, 250, 500, 1000, 2000};
+    vector<int> cities = {100, 150, 200};
 
-    int num_iterations = 2000;
+    int num_iterations = 9000;
     int population_size = 50;
 
-    const int bee_iteration = 5;
+    const int alg_iteration = 5;
     int iter = 0;
     vector<SaveFileInput> saveFileInputBee;
     vector<SaveFileInput> saveFileInputNN;
@@ -49,11 +50,17 @@ int main()
         vector<City> cities_points = distance_matrix.second;
 
         vector<double> timesBee;
+        vector<double> timesNN;
         vector<double> distanceBee;
-        vector<int> best_route_overall;
-        double best_distance = std::numeric_limits<double>::max();
+        vector<double> distanceNN;
+        vector<int> best_route_overall_bee;
+        vector<int> best_route_overall_nn;
+        double best_distance_bee = std::numeric_limits<double>::max();
+        double best_distance_nn = std::numeric_limits<double>::max();
 
-        for (int i = 0; i < bee_iteration - 1; i++)
+        //algorytm pszczeli
+        // tu było bee_iteration -1 nie wiem czemu?
+        for (int i = 0; i < alg_iteration; i++)
         {
             auto start = chrono::high_resolution_clock::now();
 
@@ -62,49 +69,64 @@ int main()
             auto stop = chrono::high_resolution_clock::now();
             auto duration = chrono::duration_cast<chrono::microseconds>(stop - start);
             double time_sec = duration.count() / 1'000'000.0;
+            //cout << time_sec << "s\n";
             timesBee.push_back(time_sec);
             distanceBee.push_back(result.second);
 
-            if (result.second < best_distance) {
-                best_distance = result.second;
-                best_route_overall = result.first;
+            if (result.second < best_distance_bee) {
+                best_distance_bee = result.second;
+                best_route_overall_bee = result.first;
             }
         }
 
-        save_results_bee(cities_points, best_route_overall, best_distance, bee_fileNames[iter]);
+        save_results_bee(cities_points, best_route_overall_bee, best_distance_bee, bee_fileNames[iter]);
 
-        double avgTime = std::accumulate(timesBee.begin(), timesBee.end(), 0.0) / bee_iteration;
-        double avgDistance = std::accumulate(distanceBee.begin(), distanceBee.end(), 0.0) / bee_iteration;
+        double avgTime_bee = std::accumulate(timesBee.begin(), timesBee.end(), 0.0) / alg_iteration;
+        double avgDistance = std::accumulate(distanceBee.begin(), distanceBee.end(), 0.0) / alg_iteration;
 
         SaveFileInput resultInputBee;
         resultInputBee.cities = cities_points;
-        resultInputBee.best_route = best_route_overall;
+        resultInputBee.best_route = best_route_overall_bee;
         resultInputBee.avaregeDitance = avgDistance;
-        resultInputBee.avarageTime = avgTime;
+        resultInputBee.avarageTime = avgTime_bee;
 
         saveFileInputBee.push_back(resultInputBee);
 
-
-
         //Algorytm najbliższych somsiadów
-        auto start = chrono::high_resolution_clock::now();
+        for (int i = 0; i < alg_iteration; ++i)
+        {
+            auto start = chrono::high_resolution_clock::now();
 
-        auto result = nn_alg.nn_algorithm(city, distance_matrix.first);
+            auto result = nn_alg.nn_algorithm(city, distance_matrix.first);
 
-        auto stop = chrono::high_resolution_clock::now();
-        auto duration = chrono::duration_cast<chrono::microseconds>(stop - start);
-        double time_sec = duration.count() / 1'000'000.0;
+            auto stop = chrono::high_resolution_clock::now();
+            auto duration = chrono::duration_cast<chrono::microseconds>(stop - start);
+            double time_sec = duration.count() / 1'000'000.0;
+
+            timesNN.push_back(time_sec);
+            distanceNN.push_back(result.second);
+
+            if (result.second < best_distance_nn) {
+                best_distance_nn = result.second;
+                best_route_overall_nn = result.first;
+            }
+        }
+
+        double avgTime_nn = std::accumulate(timesNN.begin(), timesNN.end(), 0.0) / alg_iteration;
+        double avgDistance_NN = std::accumulate(distanceNN.begin(), distanceNN.end(), 0.0) / alg_iteration;
 
         SaveFileInput resultInputNN;
         resultInputNN.cities = cities_points;
-        resultInputNN.best_route = result.first;
-        resultInputNN.avaregeDitance = result.second;
-        resultInputNN.avarageTime = time_sec;
+        resultInputNN.best_route = best_route_overall_nn;
+        resultInputNN.avaregeDitance = avgDistance_NN;
+        resultInputNN.avarageTime = avgTime_nn;
         saveFileInputNN.push_back(resultInputNN);
 
-        save_results_nn(cities_points, result.first, result.second, nn_fileNames[iter]);
+        save_results_nn(cities_points, best_route_overall_nn, best_distance_nn, nn_fileNames[iter]);
 
         ++iter;
+
+        cout << "Completed for " << city << ". Times: ABC = " << avgTime_bee << "s\tNN = " << avgTime_nn << "s.\n";
 
     }
 
@@ -114,16 +136,3 @@ int main()
 
     return 0;
 }
-
-
-
-
-//save_results_bee(cities_points, result.first, result.second);
-
-//cout << "\n\nALG_ABC Czas dzialania dla " << city << " miast: " << times_bee.back() << "s";
-//cout << "\nNajlepsza kolejnosc: " << endl;
-//for (auto x : result.first)
-//{
-//    cout << x << " ";
-//}
-//cout << "\nOdleglos: " << result.second << endl;

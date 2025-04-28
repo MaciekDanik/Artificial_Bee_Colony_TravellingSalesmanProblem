@@ -133,17 +133,79 @@ void ABC_Alg::onlooker_bee_phase(vector<vector<int>>& solutions, vector<double>&
     }
 }
 
-void ABC_Alg::scout_bee_phase(vector<vector<int>>& solutions, vector<double>& fitness_values, const vector<vector<int>>& dist_matrix, int num_iterations, int num_cities, vector<int>& not_improved)
-{
-    auto worst_idx = max_element(fitness_values.begin(), fitness_values.end());
-    int worst_solution_idx = distance(fitness_values.begin(), worst_idx);
+//void ABC_Alg::scout_bee_phase(vector<vector<int>>& solutions, vector<double>& fitness_values, const vector<vector<int>>& dist_matrix, int num_iterations, int num_cities, vector<int>& not_improved)
+//{
+//    auto worst_idx = max_element(fitness_values.begin(), fitness_values.end());
+//    int worst_solution_idx = distance(fitness_values.begin(), worst_idx);
+//
+//    if (num_iterations % 10 == 0)
+//    {
+//        solutions[worst_solution_idx] = generate_initial_solution(num_cities);
+//        fitness_values[worst_solution_idx] = calculate_fitness(solutions[worst_solution_idx], dist_matrix);
+//    }
+//}
 
-    if (num_iterations % 10 == 0)
+//void ABC_Alg::scout_bee_phase(vector<vector<int>>& solutions, vector<double>& fitness_values, const vector<vector<int>>& dist_matrix, int num_cities, int num_iterations)
+//{
+//    if (num_iterations % 10 == 0)
+//    {
+//        int num_to_replace = solutions.size() / 10; // 50% rozwi¹zañ
+//
+//        // Stworzenie wektora par (fitness, indeks)
+//        vector<pair<double, int>> fitness_with_index;
+//        for (int i = 0; i < fitness_values.size(); ++i)
+//        {
+//            fitness_with_index.emplace_back(fitness_values[i], i);
+//        }
+//
+//        // Sortujemy malej¹co wed³ug fitness (gorsze rozwi¹zania na pocz¹tku)
+//        sort(fitness_with_index.rbegin(), fitness_with_index.rend());
+//
+//        // Zastêpujemy najgorsze rozwi¹zania
+//        for (int i = 0; i < num_to_replace; ++i)
+//        {
+//            int idx = fitness_with_index[i].second;
+//            solutions[idx] = generate_initial_solution(num_cities);
+//            fitness_values[idx] = calculate_fitness(solutions[idx], dist_matrix);
+//        }
+//    }
+//}
+
+void ABC_Alg::scout_bee_phase(vector<vector<int>>& solutions, vector<double>& fitness_values, const vector<vector<int>>& dist_matrix, int num_cities, vector<int>& not_improved, int num_iterations)
+{
+    if (num_iterations % 20 == 0)
     {
-        solutions[worst_solution_idx] = generate_initial_solution(num_cities);
-        fitness_values[worst_solution_idx] = calculate_fitness(solutions[worst_solution_idx], dist_matrix);
+
+        const int limit_trials = 100;  // Maksymalna liczba nieudanych prób
+        const double percent_worst = 0.20; // 50% najgorszych
+
+        int num_to_select = static_cast<int>(solutions.size() * percent_worst);
+
+        // Tworzymy pary (fitness, indeks)
+        vector<pair<double, int>> fitness_with_index;
+        for (int i = 0; i < fitness_values.size(); ++i)
+        {
+            fitness_with_index.emplace_back(fitness_values[i], i);
+        }
+
+        // Sortujemy malej¹co - najgorsze na pocz¹tku
+        sort(fitness_with_index.rbegin(), fitness_with_index.rend());
+
+        // Przechodzimy po najgorszych
+        for (int i = 0; i < num_to_select; ++i)
+        {
+            int idx = fitness_with_index[i].second;
+            if (not_improved[idx] > limit_trials)
+            {
+                // Resetujemy tylko te, które nie poprawia³y siê przez wiele prób
+                solutions[idx] = generate_initial_solution(num_cities);
+                fitness_values[idx] = calculate_fitness(solutions[idx], dist_matrix);
+                not_improved[idx] = 0;
+            }
+        }
     }
 }
+
 
 pair<vector<int>, int> ABC_Alg::abc_algorithm(const vector<vector<int>>& dist_matrix, int num_iterations, int pop_size)
 {
@@ -183,7 +245,7 @@ pair<vector<int>, int> ABC_Alg::abc_algorithm(const vector<vector<int>>& dist_ma
 
         //Scout bee phase
         //auto start_scout = chrono::high_resolution_clock::now();
-        scout_bee_phase(solutions, fitness_values, dist_matrix, iteration, num_cities, not_improved);
+        scout_bee_phase(solutions, fitness_values, dist_matrix, num_cities, not_improved, num_iterations);
         //auto stop_scout = chrono::high_resolution_clock::now();
         //auto duration_scout = chrono::duration_cast<chrono::microseconds>(stop_scout - start_scout);
         //cout << "\nScout bee phase: " << (duration_scout.count() / 1000000.0) << "s\n";
@@ -194,10 +256,10 @@ pair<vector<int>, int> ABC_Alg::abc_algorithm(const vector<vector<int>>& dist_ma
             int fitness = calculate_fitness(solution, dist_matrix);
             if (fitness < best_fitness)
             {
-                //cout << "\nOld fitness: " << best_fitness << "\n";
+                cout << "\nOld fitness: " << best_fitness << "\n";
                 best_solution = solution;
                 best_fitness = fitness;
-                //cout << "New fitness: " << best_fitness << "\n";
+                cout << "New fitness: " << best_fitness << "\n";
             }
         }
     }

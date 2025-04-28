@@ -138,7 +138,7 @@ def plot_both_routes(cities, bee_best_route, nn_best_route, bee_total_distance, 
 #cities, bee_best_route, bee_total_distance = load_results(bee_file)
 
 # CITIES = [10, 25, 50, 100]#, 250, 500, 1000] #cities.size()
-CITIES = [100, 150, 200]
+CITIES = [200]
 
 #zaczytanie danych z różnych plików
 cities_list = list()
@@ -177,12 +177,12 @@ for i in CITIES:
 
 i=0
 for _ in CITIES:
-    plt.ion()
+    #plt.ion()
     plot_route(cities_list[i], bee_best_route[i], bee_total_distance[i], "ABC alg")
     plot_route(cities_list_nn[i], nn_best_route[i], nn_total_distance[i], "NN alg")
     # plot_both_routes(cities_list[i], bee_best_route[i], nn_best_route[i], bee_total_distance[i], nn_total_distance[i], "ABC alg", "NN alg")
-    input("Press 'Enter' to close diagrams...")
-    plt.ioff()
+    #input("Press 'Enter' to close diagrams...")
+    #plt.ioff()
     i += 1
 
 

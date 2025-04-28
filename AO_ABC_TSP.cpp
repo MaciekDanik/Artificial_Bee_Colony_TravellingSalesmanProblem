@@ -19,12 +19,12 @@ int main()
     ABC_Alg alg;
     NN_alg nn_alg;
     //vector<int> cities = { 10, 25, 50 , 100, 250, 500, 1000, 2000};
-    vector<int> cities = {100, 150, 200};
+    vector<int> cities = {200};
 
-    int num_iterations = 9000;
-    int population_size = 50;
+    int num_iterations = 150000;
+    int population_size = 10;
 
-    const int alg_iteration = 5;
+    const int alg_iteration = 1;
     int iter = 0;
     vector<SaveFileInput> saveFileInputBee;
     vector<SaveFileInput> saveFileInputNN;

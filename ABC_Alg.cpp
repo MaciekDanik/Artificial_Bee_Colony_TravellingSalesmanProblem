@@ -177,7 +177,7 @@ void ABC_Alg::scout_bee_phase(vector<vector<int>>& solutions, vector<double>& fi
     {
 
         const int limit_trials = 100;  // Maksymalna liczba nieudanych prób
-        const double percent_worst = 0.20; // 50% najgorszych
+        const double percent_worst = 0.2; // 50% najgorszych
 
         int num_to_select = static_cast<int>(solutions.size() * percent_worst);
 
@@ -245,7 +245,9 @@ pair<vector<int>, int> ABC_Alg::abc_algorithm(const vector<vector<int>>& dist_ma
 
         //Scout bee phase
         //auto start_scout = chrono::high_resolution_clock::now();
+        // 
         scout_bee_phase(solutions, fitness_values, dist_matrix, num_cities, not_improved, num_iterations);
+        // 
         //auto stop_scout = chrono::high_resolution_clock::now();
         //auto duration_scout = chrono::duration_cast<chrono::microseconds>(stop_scout - start_scout);
         //cout << "\nScout bee phase: " << (duration_scout.count() / 1000000.0) << "s\n";

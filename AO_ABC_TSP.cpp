@@ -21,7 +21,7 @@ int main()
     //vector<int> cities = { 10, 25, 50 , 100, 250, 500, 1000, 2000};
     vector<int> cities = {200};
 
-    int num_iterations = 150000;
+    int num_iterations = 1000000;
     int population_size = 10;
 
     const int alg_iteration = 1;

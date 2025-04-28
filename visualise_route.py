@@ -123,11 +123,11 @@ def plot_both_routes(cities, bee_best_route, nn_best_route, bee_total_distance, 
     nn_x = [cities[city][0] for city in nn_best_route] + [cities[nn_best_route[0]][0]]
     nn_y = [cities[city][1] for city in nn_best_route] + [cities[nn_best_route[0]][1]]
     plt.plot(nn_x, nn_y, 'b--', lw=2, label=f'{nn_title} (Distance: {nn_total_distance:.2f})')
-    
+
     # Ustawienia wykresu
     plt.title("Comparison of Two Routes")
     plt.xlabel("X")
-    plt.ylabel("Y")
+    plt.ylabel("Y20")
     plt.legend()
     plt.grid(True)
     plt.show()

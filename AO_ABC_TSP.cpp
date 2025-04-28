@@ -31,14 +31,14 @@ int main()
     vector<string> bee_fileNames(cities.size(), "");
     for (int i = 0; i<cities.size(); ++i)
     {
-        bee_fileNames[i] = "results_bee_" + to_string(i) + ".txt";
+        bee_fileNames[i] = "results_bee_" + to_string(cities[i]) + "_cities.txt";
         //cout << bee_fileNames[i] << endl;
     }
 
     vector<string> nn_fileNames(cities.size(), "");
     for (int i = 0; i < cities.size(); ++i)
     {
-        nn_fileNames[i] = "results_nn_" + to_string(i) + ".txt";
+        nn_fileNames[i] = "results_nn_" + to_string(cities[i]) + "_cities.txt";
         //cout << bee_fileNames[i] << endl;
     }
 

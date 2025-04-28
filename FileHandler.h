@@ -1,8 +1,10 @@
 #include <fstream>
 #include <vector>
 #include <iostream>
+#include <filesystem>
 
 using namespace std;
+namespace fs = std::filesystem;
 
 
 class SaveFileInput {
@@ -20,7 +22,17 @@ public:
 
 void save_results_bee(const vector<City>& cities, const vector<int>& best_route, double best_distance, string filename) 
 {
-    ofstream file(filename);
+    string folderPath = "Bee_results/";
+    string filePath = folderPath + filename;
+
+    if (!fs::exists(folderPath)) {
+        if (!fs::create_directory(folderPath)) {
+            cerr << "Error creating directory!" << endl;
+            return;
+        }
+    }
+
+    ofstream file(filePath);
 
     if (!file) {
         cerr << "Error opening file!" << endl;
@@ -43,7 +55,17 @@ void save_results_bee(const vector<City>& cities, const vector<int>& best_route,
 
 void save_results_nn(const vector<City>& cities, const vector<int>& best_route, double best_distance, string filename) 
 {
-    ofstream file(filename);
+    string folderPath = "NN_results/";
+    string filePath = folderPath + filename;
+
+    if (!fs::exists(folderPath)) {
+        if (!fs::create_directory(folderPath)) {
+            cerr << "Error creating directory!" << endl;
+            return;
+        }
+    }
+
+    ofstream file(filePath);
 
     if (!file) {
         cerr << "Error opening file!" << endl;

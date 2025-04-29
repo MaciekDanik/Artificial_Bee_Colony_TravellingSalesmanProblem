@@ -19,12 +19,12 @@ int main()
     ABC_Alg alg;
     NN_alg nn_alg;
     //vector<int> cities = { 10, 25, 50 , 100, 250, 500, 1000, 2000};
-    vector<int> cities = {200};
+    vector<int> cities = {100, 150, 200, 250, 300};
 
-    int num_iterations = 250000;
+    int num_iterations = 240000;
     int population_size = 10;
 
-    const int alg_iteration = 2;
+    const int alg_iteration = 5;
     int iter = 0;
     vector<SaveFileInput> saveFileInputBee;
     vector<SaveFileInput> saveFileInputNN;
@@ -127,7 +127,7 @@ int main()
 
         ++iter;
 
-        cout << "Completed for " << city << ". Times: ABC = " << avgTime_bee << "s\tNN = " << avgTime_nn << "s.\n";
+        cout << "Completed for " << city << ". Times: ABC = " << avgTime_bee << "s. Avg_distance: ABC = " << avgDistance << "\t Times: NN = " << avgTime_nn << "s." << " Avg_distance: NN = " << avgDistance_NN << endl;
 
     }
 

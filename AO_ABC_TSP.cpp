@@ -21,10 +21,10 @@ int main()
     //vector<int> cities = { 10, 25, 50 , 100, 250, 500, 1000, 2000};
     vector<int> cities = {200};
 
-    int num_iterations = 1000000;
+    int num_iterations = 250000;
     int population_size = 10;
 
-    const int alg_iteration = 1;
+    const int alg_iteration = 2;
     int iter = 0;
     vector<SaveFileInput> saveFileInputBee;
     vector<SaveFileInput> saveFileInputNN;
@@ -80,6 +80,7 @@ int main()
         }
 
         save_results_bee(cities_points, best_route_overall_bee, best_distance_bee, bee_fileNames[iter]);
+        cout << endl << "finish bee" << endl;
 
         double avgTime_bee = std::accumulate(timesBee.begin(), timesBee.end(), 0.0) / alg_iteration;
         double avgDistance = std::accumulate(distanceBee.begin(), distanceBee.end(), 0.0) / alg_iteration;

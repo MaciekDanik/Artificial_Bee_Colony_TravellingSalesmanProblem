@@ -35,16 +35,21 @@ int ABC_Alg::calculate_fitness(const vector<int>& solution, const vector<vector<
 
 void ABC_Alg::employed_bee_phase(vector<vector<int>>& solutions, vector<double>& fitness_values, const vector<vector<int>>& dist_matrix, const int num_cities)
 {
-    //#pragma omp parallel //for private(gen, distrib) //Tutaj by³o zakomentowane
+
     for (int i = 0; i < solutions.size(); ++i)
     {
-        mt19937 gen(random_device{}());  // jeden generator na w¹tek
+        mt19937 gen(random_device{}());
         uniform_int_distribution<> distrib(0, num_cities - 1);
 
         vector<int> new_solution = solutions[i];
-        int rnd_pos1 = distrib(gen);
-        int rnd_pos2 = distrib(gen);
-        swap(new_solution[rnd_pos1], new_solution[rnd_pos2]);
+
+        // Wybór dwóch punktów do odwrócenia fragmentu trasy
+        int pos1 = distrib(gen);
+        int pos2 = distrib(gen);
+        if (pos1 > pos2) std::swap(pos1, pos2);
+
+        // Operator 2-opt: odwrócenie czêœci trasy miêdzy pos1 a pos2
+        reverse(new_solution.begin() + pos1, new_solution.begin() + pos2 + 1);
 
         int new_fitness = calculate_fitness(new_solution, dist_matrix);
 
@@ -54,6 +59,25 @@ void ABC_Alg::employed_bee_phase(vector<vector<int>>& solutions, vector<double>&
             fitness_values[i] = new_fitness;
         }
     }
+    //#pragma omp parallel //for private(gen, distrib) //Tutaj by³o zakomentowane
+    //for (int i = 0; i < solutions.size(); ++i)
+    //{
+    //    mt19937 gen(random_device{}());  // jeden generator na w¹tek
+    //    uniform_int_distribution<> distrib(0, num_cities - 1);
+
+    //    vector<int> new_solution = solutions[i];
+    //    int rnd_pos1 = distrib(gen);
+    //    int rnd_pos2 = distrib(gen);
+    //    swap(new_solution[rnd_pos1], new_solution[rnd_pos2]);
+
+    //    int new_fitness = calculate_fitness(new_solution, dist_matrix);
+
+    //    if (new_fitness < fitness_values[i])
+    //    {
+    //        solutions[i] = new_solution;
+    //        fitness_values[i] = new_fitness;
+    //    }
+    //}
 
 
     //random_device rd;
